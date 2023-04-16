@@ -3,42 +3,46 @@
 // NOTE: This is a global used only in the controller
 var gLastRes = null
 
+$(init)
 
-
-$(document).ready(init)
-$('.btn-start').click(onStartGuessing)
-$('.btn-yes').click({ans: 'yes'}, onUserResponse)
-$('.btn-no').click({ans: 'no'}, onUserResponse)
-$('.btn-add-guess').click(onAddGuess)
 
 function init() {
   createQuestsTree()
+  addEventListeners()
+}
+
+
+function addEventListeners() {
+  $('.btn-start').click(onStartGuessing)
+  $('.btn-yes').click({ ans: 'yes' }, onUserResponse)
+  $('.btn-no').click({ ans: 'no' }, onUserResponse)
+  $('.btn-add-guess').click(onAddGuess)
+
 }
 
 function onStartGuessing() {
-  // TODO: hide the game-start section
+  // DONE: hide the game-start section
   $('.game-start').hide()
   renderQuest()
-  // TODO: show the quest section
+  // DONE: show the quest section
   $('.quest').show()
-  
+
 }
 
 function renderQuest() {
-  // TODO: select the <h2> inside quest and update
+  // DONE: select the <h2> inside quest and update
   // its text by the currQuest text
   const currQuest = gCurrQuest
   $('.quest h2').text(currQuest.txt)
 }
 
 function onUserResponse(ev) {
-  console.log('ev', ev)
   var res = ev.data.ans
-  console.log(res)
   // If this node has no children
   if (isChildless(getCurrQuest())) {
     if (res === 'yes') {
       alert('Yes, I knew it!')
+      onRestartGame()
       // TODO: improve UX
     } else {
       alert('I dont know...teach me!')
@@ -48,7 +52,7 @@ function onUserResponse(ev) {
     }
   } else {
     // TODO: update the lastRes global var
-
+    gLastRes = res
     moveToNextQuest(res)
     renderQuest()
   }
@@ -61,16 +65,15 @@ function onAddGuess(ev) {
 
   // TODO: Get the inputs' values
   // TODO: Call the service addGuess
-
+  addGuess(newQuest, newGuess, gLastRes)
   onRestartGame()
 }
 
 function onRestartGame() {
-  console.log(gQuestsTree)
-  createQuestsTree()
   $('.new-quest').hide()
+  $('.quest').hide()
   $('.game-start').show()
   gLastRes = null
+  resetQuestions()
 }
-
 
